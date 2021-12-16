@@ -1,0 +1,64 @@
+[
+
+    {
+        id:1,
+        name:"subrato saha",
+        age:26
+        dep_id:1
+    },
+    {
+        id:2,
+        name:"amit",
+        age:29
+    }
+]
+
+[
+
+    {
+        id:1,
+        name:"IT"
+    },
+    {
+        id:2
+        name:"HR"
+    }
+
+]
+
+// here we have two collections employee & department,
+// there is one to many relationship between department & employee(cause one department can have many employees)
+// & now to create relationship we pass reference id or primary key of department collection to employee collection
+// in employee collection we know that one employee subrato belongs to IT department by referencing the id
+
+// embedding: only in mongodb, we can pass employees id in department collection as an Array like this :
+[
+
+    {
+        id:1,
+        name:"IT"
+        employees:[1,2]
+    },
+    {
+        id:2
+        name:"HR"
+    }
+
+]
+
+
+
+// many to many relationship:
+// if we have many to many relationship, to create relationship between two collections then create one more collection that will hold reference of both
+// now in this case, actors & movies have many to many relationship, cause one actor can work in many movies & one movie can have many actors
+// so problem we are facing here, how can we pass reference id to make relationship between them 
+// so what we do, we create a separate collection & passing reference id as a foreign key of our both collection so that it can reference.
+// we can name this collection, movie_actor collection
+
+[
+    {
+        movie_id:
+        actor_id:
+    }
+
+]

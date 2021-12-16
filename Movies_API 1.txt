@@ -1,0 +1,87 @@
+// package.json:
+// whenever we start creating a project in node js or javascript, 1st thing we do we make a package.json file 
+// with the help of npm init command into terminal so that we can store all the details related to this project 
+// package.json is basically configuration file of this project 
+// inside package.json file we have a create a property under "scripts: section where we write a command "start"
+// which internally run nodemon index.js 
+// so npm start command run the file automatically & purpose of doing this so that universally poeple we know start command run the js file
+
+
+// third-party packages:
+// we have to install third party packages,here we are only going to install 2 third party packages
+// npm install express mongoose
+// express for creating the API & mongoose for connecting API to mongo server
+// after installing the packages,its create a package-lock.json file where all the information related to the packages we install are there .
+
+
+// import packages:
+// now to import packages, we have to create variable as express & mongoose where require() function use for import the package
+// all the functionalities of this packages available as an of express & mongoose object
+
+
+// mongo connection:
+// now to connect our application to our mongo server or database we use mongoose package
+// connect() is the function inside which we passing url string or address 
+// like this: mongoose.connect("mongodb://localhost:27017/moviesdb")
+// here moviesdb is the database we created inside mongo server & now we trying to connect with that database
+// connect() function return a promise, to handle it if resolve either use .then() or if rejects use .catch()
+// after running the file, our application connected to moviesdb database, mongo server connection successfully created 
+
+
+
+// schema with validation:
+// schema is nothing but the structer of data that need to be follow whenever we insert data inside mongo server 
+// we create schema as an object by the name moviesSchema with help of new keyword & schema() function available inside mongoose library 
+// like this: const moviesSchema= new mongoose.Schema({})
+// here, we are using schema with proper validation by mentioning the property & inside that property as an object we mention the type of data & required:true
+// after creating the all properties & values in a 1st parameter
+// in 2nd parameter we can add one more property called timestamps:true;
+// when storing the data its basically created two more property(created at & updated at), so it will keep track of properties internally
+
+
+
+// model:
+// now insert the data inside a particular collecton by following the schema we have create the model 
+// here,we create model named moviesModel by using new keyword & model() function available inside mongoose package
+// & this model() function takes two parameter, 1st collecton name which inside our database & name of the schema which we are going to follow to create data inside of this collecton.
+// like this: const moviesModel= new mongoose.model('movies',moviesSchema); 
+
+
+
+
+// express object & server:
+// express package returns a function express(),this function returns a object we can name it anything but mostly name it app, 
+// with the help of express() function we are gonna create a an express object
+// this object has all the functionalities to create a API or configure the express application.
+// like this: const app=express();
+// now after creating the object we can make it to listen to any port number with the help of listen(8000)
+// like this: app.listen(8000,()=>{console.log("server is running!")});
+
+
+
+// middleware function:
+// in the request in case of PUT or POST method body data will come as chunk by chunk & if we dont want to extract it manually 
+// we have to use middleware function , its nothing but a function that sits between request & endpoint
+// its take the request, extract the data internally & put it into new property called body into the request
+// now we can access the body data by req.body property
+// to use middleware function in our project, we gonna use
+// app.use(express.json())
+// this use() is the function in which we pass the function that we want as a middleware function for our API 
+
+
+// 1st endpoint:
+// to create a movie(POST method)
+// we are gonna using post() function that is directly available in express to handle POST request
+// inside post() function we take 2 parameters, 1st the url in which request will come & in 2nd parameter its a callback function that is getting called whenever a request comes, inside this callback function request & response object available as a parameter
+// & here we are getting the body data directly in req.body by using the middleware function & we store it into a variable.
+// now to store data into collecton, we have to create model object using new keyword & model
+// like this:     let movieOBJ= new moviesModel(movie);
+// inside the model we gonna pass our data which is movie
+// now to save the into collecton we are using save() function which is return also promise
+// like this:  movieOBJ.save()
+// it return a promise, if resolve handle with then() function if rejects handle with catch()
+// now when we send a POST request from client, its coming to our API endpoint,
+// & the data coming into request, extracted by middleware function & the data directly available in req.body object
+// now we store the data into movie variable,
+// to store the data into collecton, we create model object using new keyword & model, & we passing the body data into model 
+// finally with the help of save() we save the data into collecton.

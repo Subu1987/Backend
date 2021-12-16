@@ -1,0 +1,226 @@
+/*************** movies collection endpoints **************/
+
+// 2nd endpoint:
+// to create the API for fetch the method we gonna use GET request
+// fetch the all movies:
+// in express, we are gonna use app.get("/movies",(req,res)=>{})
+// in get() function 1st parameter will be the url in which request is coming & 2nd parameter a callback function where request & response object available as parameter.
+// now to fetch the data from mongo server or database we are gonna use model which we already created 
+// like this:     moviesModel.find()
+// here, find() function use for get the all data from our collection it returns a promise
+// .then() function use to handle this promise if resolve & the data directly available inside callback parameter in then() function
+// .catch() function use to handle if promise reject
+
+
+
+// fetch the only a single movie:
+// in express, how do we read url data from request
+// we just mention, in app.get("/movies/:id")
+// means to read url parameter, we have to add colon then url variable name 
+// now when a request coming from a client , the value is directly available in request object params property from that we can get the url data 
+// after that we store the url data into a variable like this:     let id= req.params.id;
+// now to get the data from collection we are gonna use model, & the findOne() by mentioning inside of it a condition
+// like this:     moviesModel.findOne({_id:id})
+// findOne() again returns a promise , if it resolve we gonna handle it with then() function 
+// inside then() function , our data available as a callback parameter
+
+
+
+
+// delete a single movie:
+// in express, how do we read url data from request
+// we just mention, in app.get("/movies/:id")
+// means to read url parameter, we have to add colon then url variable name 
+// now when a request coming from a client , the value is directly available in request object params property from that we can get the url data 
+// after that we store the url data into a variable like this:     let id= req.params.id;
+// now to delete the data from collection we are gonna use model, & the deleteOne() function by mentioning inside of it a condition
+// like this:     moviesModel.deleteOne({_id:id})
+// deleteOne() again returns a promise , if it resolve we gonna handle it with then() function 
+
+
+
+// to update a movie(PUT method)
+// in express, to update a data direct function available put() function
+// to update data two things we have read 1st url parameter value coming from client & body data coming from client
+// in express, how do we read url data from request
+// we just mention, in app.get("/movies/:id")
+// means to read url parameter, we have to add colon then url variable name 
+// now when a request coming from a client , the value is directly available in request object params property from that we can get the url data 
+// after that we store the url data into a variable like this:     let id= req.params.id;
+// & the data coming into request, extracted by middleware function & the data directly available in req.body object
+// now we store the data into movieUpdate variable,
+// now to update a movie into our collection again we are gonna use our model & updateOne() function
+// inside updateOne() function, it have two parameter, 1st url parameter reading logic
+// 2nd thing it has, the variable where we store our body data
+// like this:     moviesModel.updateOne({_id:id},movieUpdate)
+// again updateOne() function returns a promise & we are gonna handle it
+
+
+/*************** actors collection endpoints **************/
+
+// create new collection:
+// inside mongo server, we create a new collection name actors & another reference or helper collection name movies_actors inside compass
+// so that we can refer this actor belongs to this movie or this movie belongs to this actor
+// we also have to create schema & model for actors collection
+// actor schema:
+                const actorSchema= new mongoose.Schema({
+
+                name:{type:String,required:true},
+                age:{type:Number,required:true},
+                profile:{type:String,required:true}
+
+            })
+// actor model: const actorModel= new mongoose.model('actors',actorSchema);
+
+// then after that we create all the endpoints GET,POST,PUT,DELETE one by one for actors
+
+
+
+
+/*************** movies_actors collection endpoints **************/
+
+// movies_actors collection:
+// now we are creating a separate or helper collection, to reference the both movies & actors collection 
+// to create a relationship between them so we can know that this actor belongs to this movie & this movie belongs to this actor
+// we will passing both collections reference id as foreign key for that 1st we have to create schema & model of that collection
+// schema:
+                const movieActorSchema= new mongoose.Schema({
+
+                    movie_id:{type:mongoose.Schema.Types.ObjectId},
+                    actor_id:{type:mongoose.Schema.Types.ObjectId}
+
+                })
+// here, type property is, ObjectId which coming from mongoose object which we importing 
+// & the id mongodb generate internally is same with this ObjectId
+
+// now how do we connect this movie_id & actor_id property to movies collection & actors collection
+// like this:
+                const movieActorSchema= new mongoose.Schema({
+
+                movie_id:{type:mongoose.Schema.Types.ObjectId,ref:"movies"},
+                actor_id:{type:mongoose.Schema.Types.ObjectId,ref:"actors"}
+
+            })
+// we add one more property called ref,from where we connect to our particular collection
+
+// model: now we have to create the model by which we can insert the data following particular schema 
+// like this: const movieActorModel= new mongoose.model('movies_actors',movieActorSchema);
+// here we create a model with the help of new keyword & model() function from mongoose object
+// while inserting the data it takes two parameter, 1st the collection name where data gonna store ,2nd schema name which gonna follow while inserting the data 
+
+
+
+
+
+// to connect the movies & actors collection
+// we are creating a endpoint for add the reference id's of both collection into movies_actors collection for that we are using POST request
+// post() function called whenever a request comes, inside it 1st parameter will be a url & 2nd parameter will be a callback function
+// inside this callback function parameter we are having request & response object 
+// the data coming from request directly available in req.body with help of middleware function & we store it into a variable
+// now to send data we create model object with the help of new keyword & model
+// now we are passing our data into model & saving is by using save() function
+// save() function returns a promise so we have to handle it 
+// like this:
+                app.post("/moviesActors",(req,res)=>{
+
+                    let movieActor=req.body;
+                    // model object 
+                    movieActorOBJ= new movieActorModel(movieActor);
+                    
+                    movieActorOBJ.save()
+                    .then(()=>{
+                        res.send({message:"Actor created for a movie"})
+                    })
+                    .catch((err)=>{
+                        console.log(err);
+                        res.send({message:"some problem"})
+                    })
+
+                })
+
+// now we call this endpoint to put actors into movie
+// so now movies_actors is the collection or area where we are storing our relationship between movies & actors 
+
+
+
+
+// how fetch data with proper relationship 
+// what if we wanna fetch movies with their actors, we will gonna create a another endpoint (GET request)
+// like this: 
+               
+                    app.get("/moviesactors",(req,res)=>{
+
+                        movieActorModel.find()
+                        .then((movies)=>{
+                            res.send( movies)
+                        })
+                        .catch((err)=>{
+                            console.log(err);
+                            res.send({message:"some problem"})
+                        })
+                    })
+// after fetching the data we only get the id's of both collection which we refer
+// like this: 
+                [
+                {
+                    "_id": "61a4f3cfb207b570cd2fc100",
+                    "movie_id": "61a279207a7c568833cd99f8",
+                    "actor_id": "61a45364dff0d90f2d21a4a0",
+                    "__v": 0
+                }
+                ]
+// but we dont wanna id's we want data what we refer to this collection 
+// so to get the real data we have to use one more function called populate()(means fill or be present)
+// inside of this function we mention the property which data we want to show 
+// so what will it d, it simply replacing the id with the data 
+// like this: 
+                app.get("/moviesactors",(req,res)=>{
+
+                movieActorModel.find().populate('movie_id')
+                .then((movies)=>{
+                    res.send( movies)
+                })
+                .catch((err)=>{
+                    console.log(err);
+                    res.send({message:"some problem"})
+                })
+            })
+// so what will it do, it simply giving me the whole movies data instead of movie_id which we populate here 
+// so when we write populate('movie_id') we asking instead movie_id it give us the collection which its belongs to
+// caused in schema we write the ref property, by which it understand that this id belongs to this collection   
+
+// now if we wanna populate the actor_id we will get collection where it belongs to 
+// like this: 
+                    app.get("/moviesactors",(req,res)=>{
+
+                    movieActorModel.find().populate('movie_id').populate('actor_id')
+                    .then((movies)=>{
+                        res.send( movies)
+                    })
+                    .catch((err)=>{
+                        console.log(err);
+                        res.send({message:"some problem"})
+                    })
+                })
+
+
+
+
+
+// now what if we want a data like based on a condition
+// like in a particular movie how many actors work 
+// like this: 
+                app.get("/moviesactors",(req,res)=>{
+
+                movieActorModel.find({movie_id:"61a274d47a7c568833cd99f6"}).populate('movie_id').populate('actor_id')
+                .then((movies)=>{
+                    res.send( movies)
+                })
+                .catch((err)=>{
+                    console.log(err);
+                    res.send({message:"some problem"})
+                })
+            })
+// here, we mention a movie_id inside find() function so that we get the movie belongs to that & which actors also belongs that
+// & here, we can only make a condition on the property which is available in that collection like in this case movie_id & actor_id belongs that movies_actors collection
+// because the data coming it still populate, still coming as movie_id & actor_id but due to populate() function it show the real data only on display
